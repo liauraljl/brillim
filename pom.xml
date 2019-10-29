@@ -46,6 +46,7 @@
 
     <modules>
         <module>common</module>
-        <module>im-server</module><!-- 8090 -->
+        <module>web</module><!-- 8090 -->
+        <module>im-server</module><!-- 8091 -->
     </modules>
 </project>

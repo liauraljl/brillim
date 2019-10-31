@@ -21,7 +21,7 @@ public class MessageConsumer implements WorkHandler<TranslatorDataWapper> {
     public void onEvent(TranslatorDataWapper translatorDataWapper) throws Exception {
         TranslatorData data=translatorDataWapper.getData();
         ChannelHandlerContext ctx=translatorDataWapper.getCtx();
-        //1.业务处理逻辑:
+        /*//1.业务处理逻辑:
         System.err.println("Sever端: id= " + data.getId()
                 + ", name= " + data.getName()
                 + ", message= " + data.getMessage());
@@ -30,8 +30,10 @@ public class MessageConsumer implements WorkHandler<TranslatorDataWapper> {
         TranslatorData response = new TranslatorData();
         response.setId("resp: " + data.getId());
         response.setName("resp: " + data.getName());
-        response.setMessage("resp: " + data.getMessage());
+        response.setMessage("resp: " + data.getMessage());*/
         //写出response响应信息:
-        ctx.writeAndFlush(response);
+        //ctx.writeAndFlush(response);
+
+
     }
 }

@@ -36,6 +36,13 @@ public class RingBufferWorkerPoolFactory {
 
     private WorkerPool<TranslatorDataWapper> workerPool;
 
+    /**
+     * 初始化disruptor
+     * @param producerType
+     * @param bufferSize
+     * @param waitStrategy
+     * @param messageConsumers
+     */
     public void initAndStart(ProducerType producerType, int bufferSize, WaitStrategy waitStrategy,MessageConsumer[] messageConsumers){
         //1、构建ringBuffer对象
         this.ringBuffer=RingBuffer.create(producerType, new EventFactory<TranslatorDataWapper>() {
@@ -56,8 +63,26 @@ public class RingBufferWorkerPoolFactory {
         this.ringBuffer.addGatingSequences(this.workerPool.getWorkerSequences());
         //6、启动工作池
         this.workerPool.start(getWorkPoolStartExecutor());
+        //初始化生产者
+        initProducer();
     }
 
+    /**
+     * 初始化生产者
+     */
+    private void initProducer(){
+        for(int i=0;i<10;i++){
+            String producerId="server:disruptor:producerId:"+i;
+            MessageProducer messageProducer=new MessageProducer(producerId,this.ringBuffer);
+            this.producers.put(producerId,messageProducer);
+        }
+    }
+
+    /**
+     * 获取消息生产者
+     * @param producerId
+     * @return
+     */
     public MessageProducer getMessageProducer(String producerId){
         MessageProducer messageProducer=this.producers.get(producerId);
         if(null==messageProducer){
@@ -70,7 +95,7 @@ public class RingBufferWorkerPoolFactory {
     /**
      * 异常处理静态类
      */
-    static class EventExceptionHandler implements ExceptionHandler<TranslatorDataWapper>{
+    private class EventExceptionHandler implements ExceptionHandler<TranslatorDataWapper>{
 
         @Override
         public void handleEventException(Throwable throwable, long l, TranslatorDataWapper translatorDataWapper) {
@@ -88,6 +113,10 @@ public class RingBufferWorkerPoolFactory {
         }
     }
 
+    /**
+     * disruptor启动线程池(单列模式，无法由spring注入)
+     * @return
+     */
     private ThreadPoolTaskExecutor getWorkPoolStartExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(8);

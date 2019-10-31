@@ -19,6 +19,10 @@ public class AuthQueue {
 
     public static Map<String,AuthTask> authMap = new ConcurrentHashMap<>();
 
+    /**
+     * 授权后从需要清除通道的延迟队列中移除
+     * @param channelId
+     */
     public static void removeId(String channelId){
         delayQueue.remove(authMap.get(channelId));
         log.info("delayQueue content:{}", Arrays.toString(delayQueue.toArray()));

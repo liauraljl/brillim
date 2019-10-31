@@ -10,11 +10,14 @@ import javax.annotation.PostConstruct;
 @Component
 public class DisruptorStart {
 
+    /**
+     * disruptor初始化
+     */
     @PostConstruct
     public void disruptorStart(){
-        MessageConsumer[] conusmers = new MessageConsumer[4];
+        MessageConsumer[] conusmers = new MessageConsumer[10];
         for(int i =0; i < conusmers.length; i++) {
-            MessageConsumer messageConsumer = new MessageConsumer("code:serverId:" + i);
+            MessageConsumer messageConsumer = new MessageConsumer("server:disruptor:consumerId:" + i);
             conusmers[i] = messageConsumer;
         }
         RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.MULTI,

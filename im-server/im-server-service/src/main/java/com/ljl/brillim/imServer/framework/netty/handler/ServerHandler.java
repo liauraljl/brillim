@@ -1,7 +1,10 @@
 package com.ljl.brillim.imServer.framework.netty.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ljl.brillim.imServer.framework.disruptor.RingBufferWorkerPoolFactory;
 import com.ljl.brillim.imServer.framework.disruptor.consumer.MessageProducer;
+import com.ljl.brillim.imServer.framework.netty.job.AuthQueue;
+import com.ljl.brillim.imServer.framework.netty.job.AuthTask;
 import com.ljl.brillim.imServer.framework.netty.model.TranslatorData;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -17,30 +20,30 @@ public class ServerHandler extends SimpleChannelInboundHandler<TextWebSocketFram
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
-        /*TranslatorData data=(TranslatorData)msg;
-        String producerId="code:producerId:server";
+        TranslatorData translatorData=JSONObject.parseObject(msg.text(),TranslatorData.class);
+        //消息id取模，选择生产者
+        String producerId="server:disruptor:producerId:"+translatorData.getMsgId()/10;
         MessageProducer messageProducer= RingBufferWorkerPoolFactory.getInstance().getMessageProducer(producerId);
-        messageProducer.pushData(data,ctx);*/
+        messageProducer.pushData(translatorData,ctx);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         String channelId = ctx.channel().id().asLongText();
-        /*log.info("通道激活：{}",ctx);
+        log.info("通道激活：{}",ctx);
         //加入延时队列 5秒内未作权限校验，删除通道
         if(!AuthQueue.authMap.containsKey(channelId)){
             AuthTask authTask = new AuthTask(5L, ctx);
             AuthQueue.authMap.put(channelId,authTask);
             AuthQueue.delayQueue.offer(authTask);
             log.info("delayQueue content:{}", Arrays.toString(AuthQueue.delayQueue.toArray()));
-        }*/
+        }
         super.channelActive(ctx);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        //NettyConnectionUtil.userOutRoom(ctx);
         super.exceptionCaught(ctx, cause);
     }
 

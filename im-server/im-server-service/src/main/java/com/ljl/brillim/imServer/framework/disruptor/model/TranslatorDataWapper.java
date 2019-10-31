@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
 
 /**
- * disruptor 数据载体
+ * disruptor 消息载体
  */
 @Data
 public class TranslatorDataWapper {

@@ -1,4 +1,4 @@
-package com.ljl.brillim.imServer.framework.netty.enums;
+package com.ljl.brillim.imServer.framework.disruptor.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Getter;
  * websocket消息类型
  */
 @AllArgsConstructor
-public enum  NettyMsgTylpeEnum {
+public enum WebsocketMsgTylpeEnum {
     AUTH(0,"AUTH"),//权限校验
     INSYSTEM(1,"INSYSTEM"),//进入系统
     INCHATROOM(2,"INCHATROOM"),//进入聊天室
@@ -17,13 +17,13 @@ public enum  NettyMsgTylpeEnum {
     FRIENDMSG(6,"FRIENDMSG");//好友消息
 
     @Getter
-    private int code;
+    private int type;
 
     @Getter
     private String desc;
 
-    public static NettyMsgTylpeEnum of(String s) {
-        for (NettyMsgTylpeEnum msgType : NettyMsgTylpeEnum.values()) {
+    public static WebsocketMsgTylpeEnum of(String s) {
+        for (WebsocketMsgTylpeEnum msgType : WebsocketMsgTylpeEnum.values() ) {
             if (msgType.desc.equals(s) ) {
                 return msgType;
             }
@@ -31,9 +31,9 @@ public enum  NettyMsgTylpeEnum {
         return null;
     }
 
-    public static NettyMsgTylpeEnum getByCode(Integer s) {
-        for (NettyMsgTylpeEnum msgType : NettyMsgTylpeEnum.values()) {
-            if (msgType.code == s ) {
+    public static WebsocketMsgTylpeEnum getByType(Integer s) {
+        for (WebsocketMsgTylpeEnum msgType : WebsocketMsgTylpeEnum.values()) {
+            if (msgType.type == s ) {
                 return msgType;
             }
         }

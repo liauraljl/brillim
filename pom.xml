@@ -48,5 +48,6 @@
         <module>common</module>
         <module>web</module><!-- 8090 -->
         <module>im-server</module><!-- 8091 -->
+        <module>im-protobuf</module>
     </modules>
 </project>

@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public class MessageProducer {
-    private String producerId;
 
     private RingBuffer<TranslatorDataWapper> ringBuffer;
 

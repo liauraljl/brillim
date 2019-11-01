@@ -26,9 +26,7 @@ public class RingBufferWorkerPoolFactory {
         return SingetonHolder.instance;
     }
 
-    private static Map<String, MessageConsumer> consumers=new ConcurrentHashMap<>();
-
-    private static Map<String, MessageProducer> producers=new ConcurrentHashMap<>();
+    private MessageProducer producer;
 
     private RingBuffer<TranslatorDataWapper> ringBuffer;
 
@@ -45,51 +43,25 @@ public class RingBufferWorkerPoolFactory {
      */
     public void initAndStart(ProducerType producerType, int bufferSize, WaitStrategy waitStrategy,MessageConsumer[] messageConsumers){
         //1、构建ringBuffer对象
-        this.ringBuffer=RingBuffer.create(producerType, new EventFactory<TranslatorDataWapper>() {
-            @Override
-            public TranslatorDataWapper newInstance() {
-                return new TranslatorDataWapper();
-            }
-        },bufferSize,waitStrategy);
+        this.ringBuffer=RingBuffer.create(producerType, () -> new TranslatorDataWapper(),bufferSize,waitStrategy);
         //2、设置序号栅栏
         this.sequenceBarrier=ringBuffer.newBarrier();
         //3、设置工作池
         this.workerPool=new WorkerPool<>(this.ringBuffer,this.sequenceBarrier,new EventExceptionHandler(),messageConsumers);
-        //4、把所构建的消费者置入池中
-        for(MessageConsumer mc:messageConsumers){
-            this.consumers.put(mc.getConsumerId(),mc);
-        }
-        //5、添加sequences
+        //4、添加sequences
         this.ringBuffer.addGatingSequences(this.workerPool.getWorkerSequences());
-        //6、启动工作池
+        //5、启动工作池
         this.workerPool.start(getWorkPoolStartExecutor());
-        //初始化生产者
-        initProducer();
-    }
-
-    /**
-     * 初始化生产者
-     */
-    private void initProducer(){
-        for(int i=0;i<10;i++){
-            String producerId="server:disruptor:producerId:"+i;
-            MessageProducer messageProducer=new MessageProducer(producerId,this.ringBuffer);
-            this.producers.put(producerId,messageProducer);
-        }
+        //6、初始化生产者
+        producer=new MessageProducer(this.ringBuffer);
     }
 
     /**
      * 获取消息生产者
-     * @param producerId
      * @return
      */
-    public MessageProducer getMessageProducer(String producerId){
-        MessageProducer messageProducer=this.producers.get(producerId);
-        if(null==messageProducer){
-            messageProducer=new MessageProducer(producerId,this.ringBuffer);
-            this.producers.put(producerId,messageProducer);
-        }
-        return messageProducer;
+    public MessageProducer getMessageProducer(){
+        return this.producer;
     }
 
     /**

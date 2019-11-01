@@ -15,9 +15,9 @@ public class DisruptorStart {
      */
     @PostConstruct
     public void disruptorStart(){
-        MessageConsumer[] conusmers = new MessageConsumer[10];
+        MessageConsumer[] conusmers = new MessageConsumer[1];
         for(int i =0; i < conusmers.length; i++) {
-            MessageConsumer messageConsumer = new MessageConsumer("server:disruptor:consumerId:" + i);
+            MessageConsumer messageConsumer = new MessageConsumer();
             conusmers[i] = messageConsumer;
         }
         RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.MULTI,

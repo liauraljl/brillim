@@ -21,9 +21,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TextWebSocketFram
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
         TranslatorData translatorData=JSONObject.parseObject(msg.text(),TranslatorData.class);
-        //消息id取模，选择生产者
-        String producerId="server:disruptor:producerId:"+translatorData.getMsgId()/10;
-        MessageProducer messageProducer= RingBufferWorkerPoolFactory.getInstance().getMessageProducer(producerId);
+        MessageProducer messageProducer= RingBufferWorkerPoolFactory.getInstance().getMessageProducer();
         messageProducer.pushData(translatorData,ctx);
     }
 

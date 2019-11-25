@@ -14,6 +14,11 @@ public class MessageProducer {
 
     private RingBuffer<TranslatorDataWapper> ringBuffer;
 
+    /**
+     * 投递消息
+     * @param data
+     * @param ctx
+     */
     public void pushData(TranslatorData data, ChannelHandlerContext ctx){
         long sequence=ringBuffer.next();
         try{

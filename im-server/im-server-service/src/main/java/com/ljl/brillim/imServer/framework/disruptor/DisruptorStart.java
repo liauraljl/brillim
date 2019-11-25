@@ -15,12 +15,15 @@ public class DisruptorStart {
      */
     @PostConstruct
     public void disruptorStart(){
+        //为保证消息有序性，采用单生产者、消费者模式
+        //不注重有序性时，可以采用多生产者、消费者模式，提高吞吐量
         MessageConsumer[] conusmers = new MessageConsumer[1];
         for(int i =0; i < conusmers.length; i++) {
             MessageConsumer messageConsumer = new MessageConsumer();
             conusmers[i] = messageConsumer;
         }
-        RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.MULTI,
+        //初始化Disruptor
+        RingBufferWorkerPoolFactory.getInstance().initAndStart(ProducerType.SINGLE,
                 1024*1024,
                 //new YieldingWaitStrategy(),
                 new BlockingWaitStrategy(),

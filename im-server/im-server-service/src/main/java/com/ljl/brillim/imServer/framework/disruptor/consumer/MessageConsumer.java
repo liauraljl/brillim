@@ -19,15 +19,23 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class MessageConsumer implements WorkHandler<TranslatorDataWapper> {
 
+    /**
+     * 消费消息
+     * @param translatorDataWapper
+     * @throws Exception
+     */
     @Override
     public void onEvent(TranslatorDataWapper translatorDataWapper) throws Exception {
-        TranslatorData translatorData=translatorDataWapper.getData();
-        ChannelHandlerContext ctx=translatorDataWapper.getCtx();
+        if (null == translatorDataWapper || null == translatorDataWapper.getCtx() || null == translatorDataWapper.getData()) {
+            return;
+        }
+        TranslatorData translatorData = translatorDataWapper.getData();
+        ChannelHandlerContext ctx = translatorDataWapper.getCtx();
         //ctx.writeAndFlush(response);
-        MsgContent msgContent=JSONObject.parseObject(translatorData.getMessage(), MsgContent.class);
-        switch (WebsocketMsgTylpeEnum.getByType(msgContent.getMsgType())){
+        MsgContent msgContent = JSONObject.parseObject(translatorData.getMessage(), MsgContent.class);
+        switch (WebsocketMsgTylpeEnum.getByType(msgContent.getMsgType())) {
             case AUTH:
-                RedisService redisService= ProxyUtil.getBean("redisService",RedisService.class);
+                RedisService redisService = ProxyUtil.getBean("redisService", RedisService.class);
 
                 break;
             case INSYSTEM:

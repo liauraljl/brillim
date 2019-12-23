@@ -23,6 +23,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TextWebSocketFram
         TranslatorData translatorData=JSONObject.parseObject(msg.text(),TranslatorData.class);
         MessageProducer messageProducer= RingBufferWorkerPoolFactory.getInstance().getMessageProducer();
         messageProducer.pushData(translatorData,ctx);
+        ctx.fireChannelRead(msg);
     }
 
     @Override
